@@ -8,46 +8,61 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class MainWindow extends JFrame {
-    private final TaskManager manager;
-    private final DefaultTableModel model;
-    private TaskForm form;
+
+    private TaskManager taskManager;
+    private JTable table;
+    private DefaultTableModel tableModel;
+
+    private TaskForm taskForm; // SINGLE INSTANCE
 
     public MainWindow(TaskManager manager) {
-        this.manager = manager;
 
-        setTitle("To-Do List");
+        this.taskManager = manager;
+
+        setTitle("To-Do List Viewer");
         setSize(700, 400);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JButton addBtn = new JButton("Add Task");
-        addBtn.addActionListener(e -> openForm());
 
-        model = new DefaultTableModel(
-                new String[]{"Task ID", "Task Name", "Description", "Status"}, 0
-        );
-        JTable table = new JTable(model);
+        addBtn.addActionListener(e -> {
 
-        add(addBtn, BorderLayout.NORTH);
+            if (taskForm == null || !taskForm.isDisplayable()) {
+                taskForm = new TaskForm(taskManager, this);
+                taskForm.setVisible(true);
+            }
+        });
+
+        String[] columns = {"Task ID", "Task Name", "Task Description", "Status"};
+
+        tableModel = new DefaultTableModel(columns, 0);
+        table = new JTable(tableModel);
+
+        refreshTable();
+
+        JPanel topPanel = new JPanel();
+        topPanel.add(addBtn);
+
+        add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
-    private void openForm() {
-        if (form == null || !form.isDisplayable()) {
-            form = new TaskForm(this, manager);
-            form.setVisible(true);
-        }
-    }
-
+    // Refresh JTable
     public void refreshTable() {
-        model.setRowCount(0);
-        for (Task t : manager.getTasks()) {
-            model.addRow(new Object[]{
+
+        tableModel.setRowCount(0);
+
+        for (Task t : taskManager.getTasks()) {
+
+            Object[] row = {
                     t.getTaskId(),
                     t.getTaskName(),
                     t.getTaskDescription(),
                     t.getStatus()
-            });
+            };
+
+            tableModel.addRow(row);
         }
     }
 }

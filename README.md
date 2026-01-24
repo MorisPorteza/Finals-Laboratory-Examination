@@ -14,7 +14,7 @@ controller for task operations.
 - Use TaskManager to handle task operations and data management
 - Refresh the task table automatically after adding new tasks
 
-## Packages/Folders Used
+## Packages Used
 - controller
 - model
 - ui

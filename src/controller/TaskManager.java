@@ -2,20 +2,30 @@ package controller;
 
 import model.Task;
 import java.util.ArrayList;
-import java.util.List;
 
 public class TaskManager {
-    private final List<Task> tasks = new ArrayList<>();
 
+    private ArrayList<Task> taskList;
+
+    public TaskManager() {
+        taskList = new ArrayList<>();
+    }
+
+    // Add Task
     public void addTask(Task task) {
-        tasks.add(task);
+        taskList.add(task);
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    // View Tasks
+    public ArrayList<Task> getTasks() {
+        return taskList;
     }
 
+    // Generate Task ID
     public int generateTaskId() {
-        return tasks.size() + 1;
+        if (taskList.isEmpty()) {
+            return 1001;
+        }
+        return taskList.get(taskList.size() - 1).getTaskId() + 1;
     }
 }
